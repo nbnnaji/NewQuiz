@@ -2,6 +2,7 @@ package com.example.nkechi_nnaji.newquiz.view;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
@@ -55,11 +56,26 @@ public class MainActivity extends AppCompatActivity {
             new Question(R.string.question_asia, true),
     };
 
+    private static final String TAG = "MainActivity";
+
+    /**
+     * Key-value pair for storing state in Bundle
+     */
+
+    private static final String KEY_INDEX = "index";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Log.d(TAG, "onCreate(Bundle) called");
+
+        //Save the value of savedInstanceState to mCurrentIndex
+        //onCreate will pick the value each time an activity is destroyed and
+        //recreated.
+        if (savedInstanceState != null) {
+            mCurrentIndex = savedInstanceState.getInt(KEY_INDEX, 0);
+        }
 
         mTrueButton = findViewById(R.id.true_button);
         mFalseButton = findViewById(R.id.false_button);
@@ -73,11 +89,13 @@ public class MainActivity extends AppCompatActivity {
          */
         mTrueButton.setOnClickListener((View view) -> {
 
+           // mFalseButton.setEnabled(false);
             checkAnswer(true);
         });
 
         mFalseButton.setOnClickListener((View view) -> {
             checkAnswer(false);
+            //mTrueButton.setEnabled(true);
         });
 
         mNextButton.setOnClickListener((View view) -> {
@@ -88,6 +106,7 @@ public class MainActivity extends AppCompatActivity {
 
             previousQuestion();
         });
+        upDateQuestion();
     }
 
     /**
@@ -134,6 +153,7 @@ public class MainActivity extends AppCompatActivity {
 
         int messageResId = 0;
 
+
         if (userPressedTrue == answerIsTrue) {
             messageResId = R.string.correct_toast; // Recall resource ID of a string resource is an int
         } else {
@@ -142,6 +162,52 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(this, messageResId, Toast.LENGTH_SHORT)
                 .show();
 
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        Log.d(TAG, "onStart() called");
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d(TAG, "onResume() called");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.d(TAG, "onPause() called");
+    }
+
+    /**
+     * onSaveInstanceState callback for writing the value of mCurrentIndex to the
+     * bundle with the constant as its key.
+     * This would be read back to onCreate(Bundle)
+     *
+     * @param savedInstanceState
+     */
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        Log.i(TAG, "onSaveInstanceState");
+        savedInstanceState.putInt(KEY_INDEX, mCurrentIndex);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.d(TAG, "onStop() called");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy() called");
     }
 
 }
