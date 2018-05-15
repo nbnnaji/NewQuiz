@@ -3,7 +3,6 @@ package com.example.nkechi_nnaji.newquiz.view;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -12,8 +11,6 @@ import android.widget.Toast;
 
 import com.example.nkechi_nnaji.newquiz.R;
 import com.example.nkechi_nnaji.newquiz.model.Question;
-
-import static com.example.nkechi_nnaji.newquiz.R.string.correct_toast;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -64,6 +61,18 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String KEY_INDEX = "index";
 
+    /**
+     * Score tab
+     */
+
+    private int score = 0;
+
+    /**
+     * Total score possible
+     */
+
+    private int possibleScore = mQuestionBank.length;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,6 +86,8 @@ public class MainActivity extends AppCompatActivity {
             mCurrentIndex = savedInstanceState.getInt(KEY_INDEX, 0);
         }
 
+
+
         mTrueButton = findViewById(R.id.true_button);
         mFalseButton = findViewById(R.id.false_button);
         mNextButton = findViewById(R.id.next_button);
@@ -89,13 +100,15 @@ public class MainActivity extends AppCompatActivity {
          */
         mTrueButton.setOnClickListener((View view) -> {
 
-           // mFalseButton.setEnabled(false);
             checkAnswer(true);
+            mTrueButton.setEnabled(false);
+            mFalseButton.setEnabled(false);
         });
 
         mFalseButton.setOnClickListener((View view) -> {
             checkAnswer(false);
-            //mTrueButton.setEnabled(true);
+            mFalseButton.setEnabled(false);
+            mTrueButton.setEnabled(false);
         });
 
         mNextButton.setOnClickListener((View view) -> {
@@ -106,7 +119,9 @@ public class MainActivity extends AppCompatActivity {
 
             previousQuestion();
         });
+
         upDateQuestion();
+
     }
 
     /**
@@ -144,6 +159,12 @@ public class MainActivity extends AppCompatActivity {
 
         int question = mQuestionBank[mCurrentIndex].getTextResId(); // Assign to question value of current index
         mQuestionTextView.setText(question);// Set the textview with question value
+        mTrueButton.setEnabled(true);
+        mFalseButton.setEnabled(true);
+        mNextButton.setEnabled(true);
+        mPrevButton.setEnabled(false);
+
+
     }
 
 
@@ -152,10 +173,11 @@ public class MainActivity extends AppCompatActivity {
         boolean answerIsTrue = mQuestionBank[mCurrentIndex].isAnswerTrue(); //Answer of current question
 
         int messageResId = 0;
-
+        score = 0;
 
         if (userPressedTrue == answerIsTrue) {
             messageResId = R.string.correct_toast; // Recall resource ID of a string resource is an int
+            score++;
         } else {
             messageResId = R.string.wrong_toast; // Recall resource ID of a string resource is an int
         }
@@ -163,6 +185,7 @@ public class MainActivity extends AppCompatActivity {
                 .show();
 
     }
+
 
     @Override
     public void onStart() {
